@@ -1,0 +1,410 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DecodeLabs Project 3 | The Persistent Vault API Cockpit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="top-header">
+    <div class="brand-wrapper">
+      <div class="brand-icon">🔐</div>
+      <div>
+        <h1 class="brand-title">The Persistent Vault API</h1>
+        <div class="brand-subtitle">DecodeLabs Project 3 • Relational Bridge & Security Shield</div>
+      </div>
+    </div>
+    <div class="header-status-badge">
+      <span class="status-dot"></span>
+      <span id="header-db-status">VAULT ACTIVE (WAL MODE)</span>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="tab-button active" onclick="switchTab('tab-dashboard')" id="btn-tab-dashboard">
+        📊 Overview & HUD
+      </button>
+      <button class="tab-button" onclick="switchTab('tab-blueprint')" id="btn-tab-blueprint">
+        📐 Relational Blueprint (1:1, 1:N, M:M)
+      </button>
+      <button class="tab-button" onclick="switchTab('tab-crud')" id="btn-tab-crud">
+        ⚡ CRUD Operations Studio
+      </button>
+      <button class="tab-button" onclick="switchTab('tab-shield')" id="btn-tab-shield">
+        🛡️ The Shield: SQLi Defense Sandbox
+      </button>
+      <button class="tab-button" onclick="switchTab('tab-integrity')" id="btn-tab-integrity">
+        🔍 Integrity & Constraint Inspector
+      </button>
+      <button class="tab-button" onclick="switchTab('tab-docs')" id="btn-tab-docs">
+        📖 REST API Reference
+      </button>
+    </nav>
+
+    <!-- Tab 1: Overview & HUD -->
+    <section id="tab-dashboard" class="tab-content active">
+      <div class="grid-cols-4">
+        <div class="glass-card">
+          <div class="card-title">📦 Total Records</div>
+          <div class="metric-number" id="metric-total-records">-</div>
+          <div class="metric-label">Across 12 Active Tables</div>
+        </div>
+        <div class="glass-card">
+          <div class="card-title">🔐 Vault Secrets</div>
+          <div class="metric-number" id="metric-vault-items">-</div>
+          <div class="metric-label">Encrypted Payloads</div>
+        </div>
+        <div class="glass-card">
+          <div class="card-title">💾 Database Size</div>
+          <div class="metric-number" id="metric-db-size">-</div>
+          <div class="metric-label">Persistent SQLite File</div>
+        </div>
+        <div class="glass-card">
+          <div class="card-title">🛡️ Foreign Key Integrity</div>
+          <div class="metric-number" style="color: var(--accent-emerald)" id="metric-fk-status">100%</div>
+          <div class="metric-label">0 Violations Detected</div>
+        </div>
+      </div>
+
+      <div class="grid-cols-2">
+        <div class="glass-card">
+          <div class="card-title">🏛️ The Four Pillars of the Vault</div>
+          <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem;">
+            <div>
+              <span class="pillar-badge">Pillar 1</span>
+              <h4 style="color:#fff; font-size: 0.95rem;">The Blueprint (Schema & Relational Geometry)</h4>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">
+                Enforces Primary Keys, Foreign Keys, 1:1 (Users ↔ Profiles), 1:Many (Users → Items/Folders, Customers → Orders), and M:M (Items ↔ Tags, Students ↔ Courses).
+              </p>
+            </div>
+            <div>
+              <span class="pillar-badge">Pillar 2</span>
+              <h4 style="color:#fff; font-size: 0.95rem;">The Bridge (Integration & Connection)</h4>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">
+                Native prepared SQLite engine with Write-Ahead Logging (WAL), connection pooling, and transactional safety.
+              </p>
+            </div>
+            <div>
+              <span class="pillar-badge">Pillar 3</span>
+              <h4 style="color:#fff; font-size: 0.95rem;">The Action (CRUD & RESTful HTTP)</h4>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">
+                Complete HTTP verbs (POST, GET, PUT, PATCH, DELETE) mapped to SQL statements with semantic HTTP status envelopes (200, 201, 400, 404, 409, 422).
+              </p>
+            </div>
+            <div>
+              <span class="pillar-badge">Pillar 4</span>
+              <h4 style="color:#fff; font-size: 0.95rem;">The Shield (Integrity & Security)</h4>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">
+                Schema-level UNIQUE, NOT NULL, CHECK constraints, and 100% Parameterized Queries neutralizing SQL Injection attacks.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-title">📋 Table Row Counts</div>
+          <table class="custom-table" id="table-counts-table">
+            <thead>
+              <tr>
+                <th>Table Name</th>
+                <th>Domain / Purpose</th>
+                <th>Row Count</th>
+              </tr>
+            </thead>
+            <tbody id="table-counts-body">
+              <tr><td colspan="3" style="text-align:center; color: var(--text-muted)">Loading metrics...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Relational Blueprint -->
+    <section id="tab-blueprint" class="tab-content">
+      <div class="grid-cols-2">
+        <div class="glass-card">
+          <div class="card-title">🔗 1:1 Relationship (One-to-One)</div>
+          <div style="margin-bottom: 1rem;">
+            <div class="relation-chip">users.id (PK) ⟷ user_profiles.user_id (FK, UNIQUE)</div>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            A strictly exclusive relationship enforced via the <code style="color:var(--accent-cyan)">UNIQUE</code> constraint on <code style="color:var(--accent-cyan)">user_profiles.user_id</code>. Each user record has exactly one security clearance profile.
+          </p>
+          <div class="code-box">
+CREATE TABLE user_profiles (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL UNIQUE,
+  full_name TEXT NOT NULL,
+  clearance_level INTEGER NOT NULL CHECK(clearance_level BETWEEN 1 AND 5),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);</div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-title">📂 1:Many Relationship (One-to-Many)</div>
+          <div style="margin-bottom: 1rem;">
+            <div class="relation-chip">users.id (PK) ⟶ vault_items.user_id (FK)</div>
+            <div class="relation-chip" style="margin-top:0.4rem">customers.id (PK) ⟶ orders.customer_id (FK)</div>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            A single parent entity connecting to multiple child entities. Deleting a parent automatically cascades to child items or sets references to null.
+          </p>
+          <div class="code-box">
+CREATE TABLE vault_items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  folder_id INTEGER,
+  title TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (folder_id) REFERENCES vault_folders(id) ON DELETE SET NULL
+);</div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-title">🏷️ Many-to-Many (M:M Junction Table)</div>
+          <div style="margin-bottom: 1rem;">
+            <div class="relation-chip">vault_items ⟷ vault_item_tags ⟷ tags</div>
+            <div class="relation-chip" style="margin-top:0.4rem">students ⟷ student_courses ⟷ courses</div>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            Multiple Vault Items connected to multiple Tags using a dedicated intermediary junction table with a composite primary key.
+          </p>
+          <div class="code-box">
+CREATE TABLE vault_item_tags (
+  vault_item_id INTEGER NOT NULL,
+  tag_id INTEGER NOT NULL,
+  assigned_at DATETIME NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (vault_item_id, tag_id),
+  FOREIGN KEY (vault_item_id) REFERENCES vault_items(id) ON DELETE CASCADE,
+  FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+);</div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-title">🎓 Students ↔ Courses (M:M Domain Demo)</div>
+          <div style="margin-bottom: 1rem;">
+            <div class="relation-chip">students (PK) ⟷ student_courses (Junction) ⟷ courses (PK)</div>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            Demonstrates university course enrollment with per-course grade records.
+          </p>
+          <button class="btn btn-secondary" onclick="loadAcademicDemo()" style="margin-bottom: 0.75rem;">
+            Fetch Academic Enrollments View
+          </button>
+          <div class="code-box" id="academic-demo-output">
+Click 'Fetch Academic Enrollments View' to inspect joined M:M dataset...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: CRUD Studio -->
+    <section id="tab-crud" class="tab-content">
+      <div class="grid-cols-2">
+        <!-- Create Item Form -->
+        <div class="glass-card">
+          <div class="card-title">➕ Create Vault Secret (POST /api/v1/items)</div>
+          <form id="form-create-item" onsubmit="handleCreateItem(event)">
+            <div class="form-group">
+              <label class="form-label">Owner User</label>
+              <select class="form-select" id="input-item-userid" required></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Secret Title</label>
+              <input type="text" class="form-input" id="input-item-title" placeholder="e.g. Production AWS Access Key" required>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label class="form-label">Secret Type</label>
+                <select class="form-select" id="input-item-type">
+                  <option value="LOGIN">LOGIN</option>
+                  <option value="SECURE_NOTE">SECURE_NOTE</option>
+                  <option value="CREDIT_CARD">CREDIT_CARD</option>
+                  <option value="API_KEY" selected>API_KEY</option>
+                  <option value="DOCUMENT">DOCUMENT</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Sensitivity Score (1-100)</label>
+                <input type="number" class="form-input" id="input-item-sensitivity" min="1" max="100" value="85" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Secret Payload (Simulated Encrypted Content)</label>
+              <textarea class="form-textarea" id="input-item-payload" placeholder="Raw secret data (will be saved securely)" required>SAMPLE_ENCRYPTED_VAULT_PAYLOAD_STRING_2026</textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Assign Tags (Many-to-Many)</label>
+              <div id="tags-checkboxes" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+            </div>
+            <button type="submit" class="btn btn-emerald">
+              💾 Store Secret in Database
+            </button>
+          </form>
+        </div>
+
+        <!-- Live Items Explorer -->
+        <div class="glass-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div class="card-title" style="margin-bottom:0">📦 Vault Items Live Explorer</div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn btn-secondary" onclick="loadVaultItems(true)" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+                👁️ Reveal All
+              </button>
+              <button class="btn btn-secondary" onclick="loadVaultItems(false)" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+                🔄 Refresh
+              </button>
+            </div>
+          </div>
+          <div id="vault-items-list" style="max-height: 500px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="color: var(--text-muted); text-align: center; padding: 2rem;">Loading secrets...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 4: The Shield - SQL Injection Sandbox -->
+    <section id="tab-shield" class="tab-content">
+      <div class="grid-cols-2">
+        <div class="glass-card">
+          <div class="card-title">🧪 Interactive SQL Injection Attack Simulator</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            Test how parameterized queries defend the Persistent Vault against hostile SQL injection payloads.
+          </p>
+          <div style="margin-bottom: 1rem;">
+            <span class="payload-preset" onclick="setAttackPayload(`' OR '1'='1`)">' OR '1'='1</span>
+            <span class="payload-preset" onclick="setAttackPayload(`admin' --`)">admin' --</span>
+            <span class="payload-preset" onclick="setAttackPayload(`'; DROP TABLE users; --`)">'; DROP TABLE users; --</span>
+            <span class="payload-preset" onclick="setAttackPayload(`' UNION SELECT 1,2,3,4,5,6,7,8 --`)">' UNION SELECT ...</span>
+          </div>
+          <form onsubmit="handleTestInjection(event)">
+            <div class="form-group">
+              <label class="form-label">Attack Input Payload</label>
+              <input type="text" class="form-input" id="input-sqli-payload" value="' OR '1'='1" style="font-family: var(--font-mono); color: #f87171;" required>
+            </div>
+            <button type="submit" class="btn btn-danger">
+              🚀 Execute Attack Simulation
+            </button>
+          </form>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-title">🛡️ Defense Analysis & Execution Proof</div>
+          <div class="code-box" id="sqli-result-box" style="min-height: 250px;">
+Run an attack simulation to see parameterized query AST analysis and defense report...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 5: Integrity Inspector -->
+    <section id="tab-integrity" class="tab-content">
+      <div class="grid-cols-2">
+        <div class="glass-card">
+          <div class="card-title">🔍 Database Engine Integrity Report</div>
+          <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+            <button class="btn btn-secondary" onclick="runIntegrityInspection()">
+              ⚡ Run PRAGMA Integrity Checks
+            </button>
+          </div>
+          <div class="code-box" id="integrity-report-box">
+Click 'Run PRAGMA Integrity Checks' to inspect SQLite database health...</div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-title">📋 Schema Constraints Inspector</div>
+          <div class="code-box" id="constraints-report-box" style="max-height: 400px;">
+Loading constraints...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 6: REST API Reference -->
+    <section id="tab-docs" class="tab-content">
+      <div class="glass-card">
+        <div class="card-title">📖 RESTful API Endpoints Specification</div>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Endpoint</th>
+              <th>Description</th>
+              <th>Pillar / Constraints</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="tag-badge" style="background:#10b981; color:#064e3b;">GET</span></td>
+              <td><code>/api/v1/users</code></td>
+              <td>List all users with 1:1 profile and item counts</td>
+              <td>1:1 Relational Join, Pagination</td>
+              <td><button class="btn btn-secondary" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="testApiEndpoint('GET', '/api/v1/users')">Test</button></td>
+            </tr>
+            <tr>
+              <td><span class="tag-badge" style="background:#3b82f6; color:#1e3a8a;">POST</span></td>
+              <td><code>/api/v1/users</code></td>
+              <td>Create new user + profile</td>
+              <td>Atomic ACID Transaction, UNIQUE check</td>
+              <td><button class="btn btn-secondary" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="testApiEndpoint('GET', '/api/v1/users/1')">Get User #1</button></td>
+            </tr>
+            <tr>
+              <td><span class="tag-badge" style="background:#10b981; color:#064e3b;">GET</span></td>
+              <td><code>/api/v1/items</code></td>
+              <td>List vault items with joined M:M tags</td>
+              <td>M:M Aggregation, Filter & Search</td>
+              <td><button class="btn btn-secondary" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="testApiEndpoint('GET', '/api/v1/items')">Test</button></td>
+            </tr>
+            <tr>
+              <td><span class="tag-badge" style="background:#3b82f6; color:#1e3a8a;">POST</span></td>
+              <td><code>/api/v1/items</code></td>
+              <td>Create vault secret with tags</td>
+              <td>1:Many + M:M Junction Sync</td>
+              <td><button class="btn btn-secondary" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="switchTab('tab-crud')">Go to Form</button></td>
+            </tr>
+            <tr>
+              <td><span class="tag-badge" style="background:#10b981; color:#064e3b;">GET</span></td>
+              <td><code>/api/v1/academics/students</code></td>
+              <td>List students with enrolled courses</td>
+              <td>M:M Students ↔ Courses</td>
+              <td><button class="btn btn-secondary" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="testApiEndpoint('GET', '/api/v1/academics/students')">Test</button></td>
+            </tr>
+            <tr>
+              <td><span class="tag-badge" style="background:#10b981; color:#064e3b;">GET</span></td>
+              <td><code>/api/v1/commerce/customers</code></td>
+              <td>List customers with lifetime orders</td>
+              <td>1:Many Customers ⟶ Orders</td>
+              <td><button class="btn btn-secondary" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="testApiEndpoint('GET', '/api/v1/commerce/customers')">Test</button></td>
+            </tr>
+            <tr>
+              <td><span class="tag-badge" style="background:#8b5cf6; color:#2e1065;">POST</span></td>
+              <td><code>/api/v1/security/injection-sandbox</code></td>
+              <td>Test SQL Injection defense</td>
+              <td>Parameterized Prepared Statements</td>
+              <td><button class="btn btn-secondary" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="switchTab('tab-shield')">Go to Sandbox</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top: 1.5rem;">
+          <h4 style="color:#fff; margin-bottom: 0.5rem;">Interactive API Output Console:</h4>
+          <div class="code-box" id="api-output-box">Click 'Test' on any endpoint above to see the live response payload and status codes...</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+﻿{
+  "name": "decodelabs-the-persistent-vault-api",
+  "version": "1.0.0",
+  "description": "DecodeLabs Project 3: The Persistent Vault API - Relational Schema, CRUD, Constraints & SQL Injection Shield",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "migrate": "node src/database/migrate.js",
+    "seed": "node src/database/seedData.js",
+    "db:reset": "node src/database/migrate.js --reset && node src/database/seedData.js",
+    "test": "node src/tests/run-tests.js"
+  },
+  "keywords": [
+    "decodelabs",
+    "vault-api",
+    "sql",
+    "relational-database",
+    "sqlite",
+    "crud",
+    "parameterized-queries",
+    "database-security",
+    "constraints",
+    "many-to-many"
+  ],
+  "author": "DecodeLabs Full Stack Developer",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^13.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "zod": "^3.24.2"
+  }
+}
